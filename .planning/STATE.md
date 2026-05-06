@@ -32,8 +32,8 @@ See: `.planning/PROJECT.md` (updated 2026-05-06)
 
 ## Session Continuity
 
-- Stopped at: Phase 1 context gathered
-- Resume from: `.planning/phases/01-api-foundation-and-safety-boundaries/01-CONTEXT.md`
+- Stopped at: Phase 1 planning complete
+- Resume from: `.planning/phases/01-api-foundation-and-safety-boundaries/01-01-PLAN.md`
 
 ## UI Contract
 
@@ -42,7 +42,7 @@ See: `.planning/PROJECT.md` (updated 2026-05-06)
 
 ## Next Command
 
-`$gsd-plan-phase 1`
+`$gsd-execute-phase 1`
 
 ---
-*Last updated: 2026-05-06 after Phase 1 UI-SPEC approval*
+*Last updated: 2026-05-06 after Phase 1 planning*
