@@ -39,10 +39,12 @@ See: `.planning/PROJECT.md` (updated 2026-05-06)
 
 - Phase 1 UI-SPEC: approved
 - UI-SPEC path: `.planning/phases/01-api-foundation-and-safety-boundaries/01-UI-SPEC.md`
+- Phase 2 UI-SPEC: approved
+- UI-SPEC path: `.planning/phases/02-health-alerts-and-operational-visibility/02-UI-SPEC.md`
 
 ## Next Command
 
 `$gsd-plan-phase 2`
 
 ---
-*Last updated: 2026-05-06 after Phase 2 context capture*
+*Last updated: 2026-05-06 after Phase 2 UI-SPEC approval*
