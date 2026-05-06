@@ -30,9 +30,14 @@ See: `.planning/PROJECT.md` (updated 2026-05-06)
 - Pending phases: 5
 - Requirements mapped: 18/18
 
+## Session Continuity
+
+- Stopped at: Phase 1 context gathered
+- Resume from: `.planning/phases/01-api-foundation-and-safety-boundaries/01-CONTEXT.md`
+
 ## Next Command
 
-`$gsd-discuss-phase 1`
+`$gsd-plan-phase 1`
 
 ---
-*Last updated: 2026-05-06 after roadmap creation*
+*Last updated: 2026-05-06 after Phase 1 context capture*
