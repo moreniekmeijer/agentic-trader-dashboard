@@ -1,4 +1,4 @@
-export type PollingDomain = 'health' | 'positions' | 'trades' | 'alerts'
+export type PollingDomain = 'health' | 'positions' | 'trades' | 'alerts' | 'logs'
 
 interface DomainPolicy {
   baseMs: number
@@ -11,6 +11,7 @@ const DOMAIN_POLICIES: Record<PollingDomain, DomainPolicy> = {
   positions: { baseMs: 5000, backgroundMultiplier: 2, maxBackoffMs: 45000 },
   trades: { baseMs: 10000, backgroundMultiplier: 2, maxBackoffMs: 60000 },
   alerts: { baseMs: 5000, backgroundMultiplier: 2, maxBackoffMs: 45000 },
+  logs: { baseMs: 5000, backgroundMultiplier: 2, maxBackoffMs: 45000 },
 }
 
 function isBackgroundTab(): boolean {
@@ -33,4 +34,3 @@ export function backoffDelayMs(domain: PollingDomain, failures: number): number 
   const base = policy.baseMs * 2 ** Math.max(0, failures - 1)
   return Math.min(base, policy.maxBackoffMs)
 }
-

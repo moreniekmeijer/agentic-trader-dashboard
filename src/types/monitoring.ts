@@ -1,9 +1,11 @@
 export type Severity = 'info' | 'warning' | 'critical'
+export type HealthStatus = 'healthy' | 'degraded' | 'down'
+export type LogLevel = 'debug' | 'info' | 'warning' | 'error'
 
 export interface AgentHealth {
   id: string
   name: string
-  status: 'healthy' | 'degraded' | 'down'
+  status: HealthStatus
   lastHeartbeat: string
   reason?: string
 }
@@ -31,12 +33,20 @@ export interface TradeRecord {
 export interface AlertEvent {
   id: string
   severity: Severity
+  source: string
   message: string
   timestamp: string
+}
+
+export interface OperationalLogEvent {
+  id: string
+  timestamp: string
+  source: string
+  level: LogLevel
+  message: string
 }
 
 export interface ContractIssue {
   message: string
   lastGoodAt?: string
 }
-

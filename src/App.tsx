@@ -1,4 +1,7 @@
 import { useMemo, useState } from 'react'
+import { AlertsPanel } from './components/dashboard/AlertsPanel'
+import { HealthPanel } from './components/dashboard/HealthPanel'
+import { LogsPanel } from './components/dashboard/LogsPanel'
 import { PanelFrame } from './components/dashboard/PanelFrame'
 import { RefreshBar } from './components/dashboard/RefreshBar'
 import {
@@ -7,6 +10,7 @@ import {
   summarizePnl,
   useAgentHealthPanel,
   useAlertsPanel,
+  useLogsPanel,
   usePositionsPanel,
   useTradesPanel,
 } from './lib/api/queries'
@@ -18,6 +22,7 @@ function App() {
   const positions = usePositionsPanel()
   const trades = useTradesPanel()
   const alerts = useAlertsPanel()
+  const logs = useLogsPanel()
 
   const pnl = useMemo(
     () => summarizePnl(positions.data?.items ?? []),
@@ -33,6 +38,7 @@ function App() {
         positions.refresh,
         trades.refresh,
         alerts.refresh,
+        logs.refresh,
       ])
     } finally {
       setRefreshingAll(false)
@@ -71,30 +77,6 @@ function App() {
       </section>
 
       <section className="panel-grid">
-        <PanelFrame
-          title="Agent Health"
-          loading={health.isLoading}
-          contractIssue={health.data?.contractIssue}
-          lastGoodAt={health.data?.lastGoodAt}
-          emptyText="No Monitoring Data Yet"
-          hasData={Boolean(health.data?.items.length)}
-          onRefresh={health.refresh}
-        >
-          <ul className="list">
-            {health.data?.items.map((agent) => (
-              <li key={agent.id} className="list-row">
-                <div>
-                  <p className="row-title">{agent.name}</p>
-                  <p className="row-subtitle">{agent.status}</p>
-                </div>
-                <p className="row-subtitle">
-                  Heartbeat: {new Date(agent.lastHeartbeat).toLocaleTimeString()}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </PanelFrame>
-
         <PanelFrame
           title="Positions"
           loading={positions.isLoading}
@@ -146,32 +128,9 @@ function App() {
             ))}
           </ul>
         </PanelFrame>
-
-        <PanelFrame
-          title="Alerts"
-          loading={alerts.isLoading}
-          contractIssue={alerts.data?.contractIssue}
-          lastGoodAt={alerts.data?.lastGoodAt}
-          emptyText="No Monitoring Data Yet"
-          hasData={Boolean(alerts.data?.items.length)}
-          onRefresh={alerts.refresh}
-        >
-          <ul className="list">
-            {alerts.data?.items.map((alert) => (
-              <li key={alert.id} className="list-row">
-                <div>
-                  <p className="row-title">{alert.message}</p>
-                  <p className="row-subtitle">
-                    {new Date(alert.timestamp).toLocaleString()}
-                  </p>
-                </div>
-                <span className={`severity severity-${alert.severity}`}>
-                  {alert.severity}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </PanelFrame>
+        <HealthPanel data={health.data} isLoading={health.isLoading} onRefresh={health.refresh} />
+        <AlertsPanel data={alerts.data} isLoading={alerts.isLoading} onRefresh={alerts.refresh} />
+        <LogsPanel data={logs.data} isLoading={logs.isLoading} onRefresh={logs.refresh} />
       </section>
       <footer className="footer-note">
         <p>Monitor-only mode is active for v1.</p>

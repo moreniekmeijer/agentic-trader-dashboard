@@ -172,10 +172,44 @@ h2 {
   padding: var(--space-sm) var(--space-md);
 }
 
+.status-down {
+  border-color: rgba(185, 28, 28, 0.35);
+  background: #fef2f2;
+}
+
+.status-degraded {
+  border-color: rgba(146, 64, 14, 0.35);
+  background: #fffbeb;
+}
+
 .row-title {
   margin: 0;
   font-size: 14px;
   font-weight: 500;
+}
+
+.log-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.log-filters select {
+  border: 1px solid var(--surface-border);
+  border-radius: var(--space-sm);
+  background: var(--surface);
+  color: var(--text);
+  padding: var(--space-xs) var(--space-sm);
+  font: inherit;
+}
+
+.log-main {
+  min-width: 180px;
+}
+
+.log-message {
+  flex: 1;
 }
 
 .row-subtitle {

@@ -9,7 +9,7 @@
 See: `.planning/PROJECT.md` (updated 2026-05-06)
 
 **Core value:** A single internal operator can clearly and reliably monitor all currently available `agentic-trader` API data from one place.
-**Current focus:** Phase 1 - API Foundation and Safety Boundaries
+**Current focus:** Phase 2 - Health, Alerts, and Operational Visibility
 
 ## Workflow Settings
 
@@ -25,15 +25,15 @@ See: `.planning/PROJECT.md` (updated 2026-05-06)
 ## Roadmap Snapshot
 
 - Total phases: 5
-- Current phase: 1
-- Completed phases: 0
-- Pending phases: 5
+- Current phase: 2
+- Completed phases: 1
+- Pending phases: 4
 - Requirements mapped: 18/18
 
 ## Session Continuity
 
-- Stopped at: Phase 2 context gathered
-- Resume from: `.planning/phases/02-health-alerts-and-operational-visibility/02-CONTEXT.md`
+- Stopped at: Phase 2 UAT complete
+- Resume from: `.planning/phases/02-health-alerts-and-operational-visibility/02-UAT.md`
 
 ## UI Contract
 
@@ -44,7 +44,7 @@ See: `.planning/PROJECT.md` (updated 2026-05-06)
 
 ## Next Command
 
-`$gsd-plan-phase 2`
+`$gsd-transition 2`
 
 ---
-*Last updated: 2026-05-06 after Phase 2 UI-SPEC approval*
+*Last updated: 2026-05-06 after Phase 2 UAT completion*

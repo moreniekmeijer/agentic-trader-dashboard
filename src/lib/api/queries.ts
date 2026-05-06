@@ -4,21 +4,20 @@ import type {
   AgentHealth,
   AlertEvent,
   ContractIssue,
+  OperationalLogEvent,
   PositionSnapshot,
-  TradeRecord,
 } from '../../types/monitoring'
 import {
-  rawAgentHealthListSchema,
-  rawAlertListSchema,
-  rawPositionListSchema,
+  rawDecisionListSchema,
   rawTradeListSchema,
 } from './contracts'
 import { getJson } from './httpClient'
 import { backoffDelayMs, pollingIntervalMs } from './pollingPolicy'
 import {
-  toAgentHealth,
-  toAlertEvent,
-  toPositionSnapshot,
+  toPseudoAlertFromDecision,
+  toPseudoHealthFromDecision,
+  toPseudoLogFromDecision,
+  toPseudoPositionFromTrade,
   toTradeRecord,
 } from './adapters'
 
@@ -28,7 +27,7 @@ export interface PanelData<T> {
   lastGoodAt?: string
 }
 
-type Domain = 'health' | 'positions' | 'trades' | 'alerts'
+type Domain = 'health' | 'positions' | 'trades' | 'alerts' | 'logs'
 
 async function fetchPanel<T>(
   path: string,
@@ -77,9 +76,11 @@ export function useAgentHealthPanel() {
     queryKey: queryKey('health'),
     queryFn: async () => {
       const result = await fetchPanel(
-        '/api/health',
+        '/decisions',
         (value) =>
-          rawAgentHealthListSchema.parse(value).map((entry) => toAgentHealth(entry)),
+          rawDecisionListSchema
+            .parse(value)
+            .map((entry) => toPseudoHealthFromDecision(entry)),
         lastGoodRef.current,
       )
       if (result.lastGoodAt) {
@@ -101,11 +102,11 @@ export function usePositionsPanel() {
     queryKey: queryKey('positions'),
     queryFn: async () => {
       const result = await fetchPanel(
-        '/api/positions',
+        '/trades',
         (value) =>
-          rawPositionListSchema
+          rawTradeListSchema
             .parse(value)
-            .map((entry) => toPositionSnapshot(entry)),
+            .map((entry) => toPseudoPositionFromTrade(entry)),
         lastGoodRef.current,
       )
       if (result.lastGoodAt) {
@@ -127,7 +128,7 @@ export function useTradesPanel() {
     queryKey: queryKey('trades'),
     queryFn: async () => {
       const result = await fetchPanel(
-        '/api/trades',
+        '/trades',
         (value) => rawTradeListSchema.parse(value).map((entry) => toTradeRecord(entry)),
         lastGoodRef.current,
       )
@@ -150,8 +151,13 @@ export function useAlertsPanel() {
     queryKey: queryKey('alerts'),
     queryFn: async () => {
       const result = await fetchPanel(
-        '/api/alerts',
-        (value) => rawAlertListSchema.parse(value).map((entry) => toAlertEvent(entry)),
+        '/decisions',
+        (value) =>
+          rawDecisionListSchema
+            .parse(value)
+            .map((entry) => toPseudoAlertFromDecision(entry))
+            .filter((entry): entry is AlertEvent => entry !== null)
+            .sort(orderAlerts),
         lastGoodRef.current,
       )
       if (result.lastGoodAt) {
@@ -165,6 +171,33 @@ export function useAlertsPanel() {
   })
 
   return { ...query, refresh: useRefresh('alerts') }
+}
+
+export function useLogsPanel() {
+  const lastGoodRef = useRef<string>()
+  const query = useQuery({
+    queryKey: queryKey('logs'),
+    queryFn: async () => {
+      const result = await fetchPanel(
+        '/decisions',
+        (value) =>
+          rawDecisionListSchema
+            .parse(value)
+            .map((entry) => toPseudoLogFromDecision(entry))
+            .sort(orderLogsNewestFirst),
+        lastGoodRef.current,
+      )
+      if (result.lastGoodAt) {
+        lastGoodRef.current = result.lastGoodAt
+      }
+      return result
+    },
+    refetchInterval: pollingIntervalMs('logs'),
+    retry: 3,
+    retryDelay: (failures) => backoffDelayMs('logs', failures),
+  })
+
+  return { ...query, refresh: useRefresh('logs') }
 }
 
 export async function refreshAllPanels(
@@ -197,4 +230,28 @@ export function highestSeverity(alerts: AlertEvent[]): AlertEvent['severity'] | 
     return 'info'
   }
   return null
+}
+
+export function orderHealth(health: AgentHealth[]): AgentHealth[] {
+  const rank: Record<AgentHealth['status'], number> = {
+    down: 0,
+    degraded: 1,
+    healthy: 2,
+  }
+  return [...health].sort((a, b) => rank[a.status] - rank[b.status])
+}
+
+function orderAlerts(a: AlertEvent, b: AlertEvent): number {
+  const rank: Record<AlertEvent['severity'], number> = {
+    critical: 0,
+    warning: 1,
+    info: 2,
+  }
+  const severityDiff = rank[a.severity] - rank[b.severity]
+  if (severityDiff !== 0) return severityDiff
+  return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+}
+
+function orderLogsNewestFirst(a: OperationalLogEvent, b: OperationalLogEvent): number {
+  return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
 }
