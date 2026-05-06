@@ -32,8 +32,8 @@ See: `.planning/PROJECT.md` (updated 2026-05-06)
 
 ## Session Continuity
 
-- Stopped at: Phase 1 planning complete
-- Resume from: `.planning/phases/01-api-foundation-and-safety-boundaries/01-01-PLAN.md`
+- Stopped at: Phase 1 execution implemented, verification pending tooling
+- Resume from: `.planning/phases/01-api-foundation-and-safety-boundaries/01-01-SUMMARY.md`
 
 ## UI Contract
 
@@ -42,7 +42,7 @@ See: `.planning/PROJECT.md` (updated 2026-05-06)
 
 ## Next Command
 
-`$gsd-execute-phase 1`
+`npm install && npm run lint && npm run build`
 
 ---
-*Last updated: 2026-05-06 after Phase 1 planning*
+*Last updated: 2026-05-06 after Phase 1 execution*
